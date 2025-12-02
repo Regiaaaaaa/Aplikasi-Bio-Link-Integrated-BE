@@ -32,7 +32,6 @@ class GoogleAuthController extends Controller
             
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            // KALO BELUM ADA → BUAT BARU
             if (!$user) {
                 $user = User::create([
                     'name'     => $googleUser->getName(),
@@ -40,7 +39,7 @@ class GoogleAuthController extends Controller
                     'email'    => $googleUser->getEmail(),
                     'avatar'   => $googleUser->getAvatar(),
                     'role'     => 'user',
-                    'password' => Hash::make('google-' . $googleUser->getId()), // password random
+                    'password' => Hash::make('google-' . $googleUser->getId()),
                 ]);
             }
 
