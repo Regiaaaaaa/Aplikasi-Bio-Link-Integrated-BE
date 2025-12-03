@@ -4,32 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    // Redirect
     public function redirect()
     {
-        $redirectUrl = Socialite::driver('google')
-            ->stateless() 
-            ->redirect()
-            ->getTargetUrl();
-
-        return response()->json([
-            'url' => $redirectUrl
-        ]);
+        return Socialite::driver('google')
+            ->stateless()
+            ->redirect();
     }
 
-    // Callback
     public function callback()
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if (!$user) {
@@ -43,20 +34,11 @@ class GoogleAuthController extends Controller
                 ]);
             }
 
-            // Sanctum Token
             $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'message' => 'Login Google berhasil',
-                'token'   => $token,
-                'user'    => $user
-            ]);
+            return redirect("http://localhost:5173/google/callback?token={$token}");
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Authentication Google gagal',
-                'detail' => $e->getMessage()
-            ], 500);
+            return redirect("http://localhost:5173/login?error=google_failed");
         }
     }
 }
