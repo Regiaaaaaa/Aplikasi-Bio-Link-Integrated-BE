@@ -49,15 +49,15 @@ class OtpController extends Controller
         $otpExpires = $user->otp_expires_at ? Carbon::parse($user->otp_expires_at) : null;
 
         if (! $user->otp_hash || ! $otpExpires) {
-            return response()->json(['error' => 'Tidak ada OTP aktif'], 400);
+            return response()->json(['error' => 'Tidak ada OTP aktif, silakan coba lagi'], 400);
         }
 
         if (Carbon::now()->greaterThan($otpExpires)) {
-            return response()->json(['error' => 'OTP telah kedaluwarsa'], 400);
+            return response()->json(['error' => 'OTP telah kedaluwarsa, silahkan kirim OTP kembali'], 400);
         }
 
         if (! Hash::check($request->otp, $user->otp_hash)) {
-            return response()->json(['error' => 'OTP salah'], 400);
+            return response()->json(['error' => 'OTP salah, Masukan OTP valid'], 400);
         }
 
         $user->otp_hash = null;
