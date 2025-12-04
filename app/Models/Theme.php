@@ -2,23 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Theme extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'background_color',
-        'text_color',
-        'button_style',
-    ];
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    // Relasi ke User (1 theme dimiliki banyak user)
-    public function users()
+    protected $fillable = ['name'];
+
+    public function bundles()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Bundle::class);
     }
 }
+

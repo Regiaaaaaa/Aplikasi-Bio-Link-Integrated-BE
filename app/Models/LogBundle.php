@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Link extends Model
+class LogBundle extends Model
 {
     use HasFactory;
 
@@ -14,18 +14,13 @@ class Link extends Model
 
     protected $fillable = [
         'bundle_id',
-        'name',
-        'url',
+        'ip_address',
+        'user_agent',
     ];
 
     public function bundle()
     {
         return $this->belongsTo(Bundle::class);
-    }
-
-    public function logs()
-    {
-        return $this->hasMany(LogLink::class);
     }
 }
 

@@ -13,18 +13,20 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'username' => 'required|string|max:50|unique:users,username',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'name'        => 'required|string|max:100',
+            'username'    => 'required|string|max:50|unique:users,username',
+            'email'       => 'required|email|unique:users,email',
+            'password'    => 'required|min:6',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'username' => $request->username,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'user',
+            'name'         => $request->name,
+            'username'     => $request->username,
+            'email'        => $request->email,
+            'phone_number' => null,
+            'password'     => Hash::make($request->password),
+            'role'         => 'user',
+            'is_active'    => true,
         ]);
 
         return response()->json([
@@ -32,6 +34,7 @@ class AuthController extends Controller
             'user' => $user
         ], 201);
     }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -41,10 +44,18 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        // Cek user tidak ditemukan / password salah
+        if (!$user || !$user->password || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Email atau password salah.'],
             ]);
+        }
+
+        // Cek user aktif
+        if (!$user->is_active) {
+            return response()->json([
+                'message' => 'Akun anda tidak aktif, hubungi admin.'
+            ], 403);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -55,6 +66,7 @@ class AuthController extends Controller
             'user'    => $user
         ]);
     }
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

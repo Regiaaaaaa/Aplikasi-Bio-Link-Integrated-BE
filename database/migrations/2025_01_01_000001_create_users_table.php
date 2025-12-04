@@ -9,31 +9,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
-            // Relasi ke theme
-            $table->foreignId('theme_id')
-                ->nullable()
-                ->constrained('themes')
-                ->nullOnDelete();
 
-            // Data user
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->text('bio')->nullable();
-            $table->string('avatar')->nullable();
+            $table->string('phone_number')->nullable();
 
-            // Role (DEFAULT: user)
-            $table->enum('role', ['admin', 'user', 'visitor'])->default('user');
+            
+            $table->enum('role', ['admin', 'user'])->default('user');
+            $table->boolean('is_active')->default(true);
 
-            // Auth
-            $table->string('password');
+            
+            $table->string('password')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
 
             $table->timestamps();
         });
-
     }
 
     public function down(): void

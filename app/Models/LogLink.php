@@ -2,29 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class ClickLog extends Model
+class LogLink extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'link_id',
-        'user_id',
         'ip_address',
         'user_agent',
     ];
 
-    // Relasi ke Link
     public function link()
     {
         return $this->belongsTo(Link::class);
     }
-
-    // Relasi ke User (optional)
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }
+

@@ -10,19 +10,14 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('themes', function (Blueprint $table) {
-            $table->id();
+{
+    Schema::create('themes', function (Blueprint $table) {
+        $table->uuid('id')->primary();
+        $table->string('name');
+        $table->timestamps();
+    });
+}
 
-            $table->string('name');
-            $table->string('background_color');
-            $table->string('text_color');
-            $table->string('button_style');
-
-            $table->timestamps();
-        });
-
-    }
 
     /**
      * Reverse the migrations.
