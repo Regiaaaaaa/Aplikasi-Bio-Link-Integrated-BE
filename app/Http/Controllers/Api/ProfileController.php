@@ -34,7 +34,7 @@ class ProfileController extends Controller
             'name' => 'string|max:255',
             'username' => 'string|max:255|unique:users,username,' . $user->id,
             'phone_number' => 'nullable|string|max:20',
-            'bio' => 'nullable|string|max:1000',
+            'bio' => 'nullable|string|max:255',
         ]);
 
         $user->update($request->only(['name', 'username', 'phone_number', 'bio']));
