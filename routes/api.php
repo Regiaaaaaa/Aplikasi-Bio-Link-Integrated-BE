@@ -27,7 +27,16 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Current user
     Route::get('/', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+        
+        // Url Avatar
+        if ($user->avatar) {
+            $user->avatar_url = asset('storage/' . $user->avatar);
+        } else {
+            $user->avatar_url = 'https://i.pravatar.cc/150';
+        }
+        
+        return $user;
     });
 
     // Logout
