@@ -12,9 +12,12 @@ class OtpMail extends Mailable
 
     public $otp;
 
-    public function __construct($otp)
+    public $name;
+
+    public function __construct($otp, $name)
     {
         $this->otp = $otp;
+        $this->name = $name;
     }
 
     public function build()

@@ -23,7 +23,7 @@ class OtpController extends Controller
         $otpExpires = $user->otp_expires_at ? Carbon::parse($user->otp_expires_at) : null;
 
         // simple rate limit: batasi request per user
-        if ($user->otp_attempts >= 5 && $otpExpires && Carbon::now()->lessThan($otpExpires->addMinutes(10))) {
+        if ($user->otp_attempts >= 5 && $otpExpires && Carbon::now()->lessThan($otpExpires->addMinutes(5))) {
             return response()->json(['error' => 'Terlalu sering meminta OTP, coba nanti'], 429);
         }
 
@@ -33,7 +33,7 @@ class OtpController extends Controller
         $user->otp_attempts = $user->otp_attempts + 1;
         $user->save();
 
-        Mail::to($user->email)->send(new OtpMail($otp));
+        Mail::to($user->email)->send(new OtpMail($otp, $user->name));
 
         return response()->json(['message' => 'OTP dikirim ke email']);
     }
@@ -57,7 +57,7 @@ class OtpController extends Controller
         }
 
         if (! Hash::check($request->otp, $user->otp_hash)) {
-            return response()->json(['error' => 'OTP salah, Masukan OTP valid'], 400);
+            return response()->json(['error' => 'OTP salah, Masukan OTP yang valid'], 400);
         }
 
         $user->otp_hash = null;

@@ -252,7 +252,7 @@
             </div>
 
             <div class="content">
-                <h2 class="greeting">Halo, Pengguna!</h2>
+                <h2 class="greeting">Halo, {{ $name }}!</h2>
                 <p class="message">
                     Kamu baru saja meminta kode OTP untuk verifikasi akun.
                     Gunakan kode berikut untuk melanjutkan proses reset password:
