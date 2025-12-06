@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OtpController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\AdminController;
 
 
 // Authentication Routes
@@ -45,7 +46,21 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'getProfile']);
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
-
-    // Avatar upload
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
+
+    // Password Settings Routes
+    Route::post('/password/set', [ProfileController::class, 'setPassword']); 
+    Route::post('/password/change', [ProfileController::class, 'changePassword']);
 });
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+
+    // Get all users
+    Route::get('/users', [AdminController::class, 'index']);
+
+    Route::post('/users/{id}/activate', [AdminController::class, 'activate']);
+    Route::post('/users/{id}/deactivate', [AdminController::class, 'deactivate']);
+
+});
+
+

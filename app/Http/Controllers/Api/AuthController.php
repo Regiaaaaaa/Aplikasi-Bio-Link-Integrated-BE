@@ -54,7 +54,7 @@ class AuthController extends Controller
         // Cek user aktif
         if (!$user->is_active) {
             return response()->json([
-                'message' => 'Akun anda tidak aktif, hubungi admin.'
+                'message' => 'Kami Mendeteksi Pelanggaran Pada Akun Anda. Silahkan Hubungi Admin Untuk Informasi Lebih Lanjut.'
             ], 403);
         }
 

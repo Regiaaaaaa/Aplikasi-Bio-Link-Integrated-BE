@@ -20,6 +20,7 @@ class ProfileController extends Controller
         } else {
             $user->avatar_url = 'https://i.pravatar.cc/150'; 
         }
+        $user->has_password = !empty($user->password);
         
         return response()->json([
             'user' => $user
@@ -72,15 +73,54 @@ class ProfileController extends Controller
 
     public function setPassword(Request $request)
     {
-        $request->validate([
-            'password' => 'required|min:6|confirmed'
-        ]);
-
         $user = Auth::user();
+
+        // Cek dulu, kalo udah punya password -> ga boleh set lagi
+        if ($user->password) {
+            return response()->json([
+                'message' => 'You already have a password. Use change password instead.'
+            ], 400);
+        }
+
+        $request->validate([
+            'password' => 'required|min:8|confirmed'
+        ]);
 
         $user->password = Hash::make($request->password);
         $user->save();
 
         return response()->json(['message' => 'Password set successfully']);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        // Jika user login Google & belum punya password → wajib set dulu
+        if (!$user->password) {
+            return response()->json([
+                'message' => 'You must set a password first before changing it.'
+            ], 400);
+        }
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:8|confirmed', 
+        ]);
+
+        // Cek password lama
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect.'
+            ], 400);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json([
+            'message' => 'Password updated successfully.'
+        ]);
     }
 }
