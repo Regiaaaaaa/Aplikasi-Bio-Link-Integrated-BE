@@ -36,6 +36,7 @@ class User extends Authenticatable
         'role',
         'is_active',
         'password',
+        'last_active',
     ];
 
     protected $hidden = ['password', 'remember_token'];

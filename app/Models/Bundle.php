@@ -17,6 +17,12 @@ class Bundle extends Model
         'theme_id',
         'name',
         'slug',
+        'instagram_url',
+        'github_url',
+        'tiktok_url',
+        'facebook_url',
+        'x_url',
+        'youtube_url',
     ];
 
     public function user()

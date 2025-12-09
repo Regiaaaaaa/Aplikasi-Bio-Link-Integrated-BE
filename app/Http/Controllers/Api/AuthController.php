@@ -27,6 +27,7 @@ class AuthController extends Controller
             'password'     => Hash::make($request->password),
             'role'         => 'user',
             'is_active'    => true,
+            'last_active'  => null, 
         ]);
 
         return response()->json([
@@ -58,12 +59,17 @@ class AuthController extends Controller
             ], 403);
         }
 
+        // Update last active
+        $user->update([
+            'last_active' => now(),
+        ]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',
             'token'   => $token,
-            'user'    => $user
+            'user'    => $user->fresh() 
         ]);
     }
 

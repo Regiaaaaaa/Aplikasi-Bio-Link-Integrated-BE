@@ -61,6 +61,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/users/{id}/activate', [AdminController::class, 'activate']);
     Route::post('/users/{id}/deactivate', [AdminController::class, 'deactivate']);
 
+    Route::get('/profile', [ProfileController::class, 'getProfile']);
+    Route::put('/profile', [ProfileController::class, 'updateProfile']);
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
+
 });
 
 
