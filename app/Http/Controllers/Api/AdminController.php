@@ -12,6 +12,14 @@ class AdminController extends Controller
     {
         $users = User::all();
 
+        foreach ($users as $user) {
+            if ($user->avatar) {
+                $user->avatar_url = asset('storage/' . $user->avatar);
+            } else {
+                $user->avatar_url = null;
+            }
+        }
+
         return response()->json([
             'users' => $users
         ]);
