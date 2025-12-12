@@ -123,4 +123,21 @@ class ProfileController extends Controller
             'message' => 'Password updated successfully.'
         ]);
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->tokens()->delete();
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Your account has been deleted successfully.'
+        ]);
+    }
+
 }

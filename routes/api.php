@@ -51,6 +51,9 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
     // Password Settings Routes
     Route::post('/password/set', [ProfileController::class, 'setPassword']); 
     Route::post('/password/change', [ProfileController::class, 'changePassword']);
+
+    // Delete user
+    Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
