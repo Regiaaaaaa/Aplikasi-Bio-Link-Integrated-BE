@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\UserAppealController;
+use App\Http\Controllers\Api\AdminAppealController;
 
 
 // Authentication Routes
@@ -54,6 +56,10 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Delete user
     Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
+
+    // Banding Procces 
+    Route::post('/appeals', [UserAppealController::class, 'store']);
+    Route::get('/appeals', [UserAppealController::class, 'index']); 
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
@@ -61,12 +67,19 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Get all users
     Route::get('/users', [AdminController::class, 'index']);
 
+    // User De/Activate
     Route::post('/users/{id}/activate', [AdminController::class, 'activate']);
     Route::post('/users/{id}/deactivate', [AdminController::class, 'deactivate']);
 
+    // Profile Admin
     Route::get('/profile', [ProfileController::class, 'getProfile']);
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
+
+    // Banding User
+    Route::get('/appeals', [AdminAppealController::class, 'index']);
+    Route::post('/appeals/{id}/approve', [AdminAppealController::class, 'approve']);
+    Route::post('/appeals/{id}/reject', [AdminAppealController::class, 'reject']);
 
 });
 

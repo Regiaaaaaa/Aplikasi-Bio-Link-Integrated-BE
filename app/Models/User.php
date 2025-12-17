@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use App\Models\UserAppeal;
 
 class User extends Authenticatable
 {
@@ -45,5 +46,10 @@ class User extends Authenticatable
     public function bundles()
     {
         return $this->hasMany(Bundle::class);
+    }
+
+    public function appeals()
+    {
+        return $this->hasMany(UserAppeal::class);
     }
 }
