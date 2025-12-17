@@ -55,7 +55,8 @@ class AuthController extends Controller
         // Cek user aktif
         if (!$user->is_active) {
             return response()->json([
-                'message' => 'Kami Mendeteksi Pelanggaran Pada Akun Anda. Silahkan Hubungi Admin Untuk Informasi Lebih Lanjut.'
+                'message' => 'Kami mendeteksi pelanggaran pada akun Anda.',
+                'detail' => $user->ban_message
             ], 403);
         }
 

@@ -35,6 +35,7 @@ class User extends Authenticatable
         'bio',
         'role',
         'is_active',
+        'ban_message',
         'password',
         'last_active',
     ];

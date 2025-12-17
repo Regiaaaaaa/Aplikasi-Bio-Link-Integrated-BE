@@ -4,34 +4,31 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    // Ambil semua user
     public function index()
     {
         $users = User::all();
 
         foreach ($users as $user) {
-            if ($user->avatar) {
-                $user->avatar_url = asset('storage/' . $user->avatar);
-            } else {
-                $user->avatar_url = null;
-            }
+            $user->avatar_url = $user->avatar
+                ? asset('storage/' . $user->avatar)
+                : null;
         }
 
-        return response()->json([
-            'users' => $users
-        ]);
+        return response()->json(['users' => $users]);
     }
 
-    // Aktivasi user
     public function activate($id)
     {
         $user = User::findOrFail($id);
 
-        $user->is_active = true;
-        $user->save();
+        $user->update([
+            'is_active' => true,
+            'ban_message' => null
+        ]);
 
         return response()->json([
             'message' => 'User activated successfully',
@@ -39,13 +36,18 @@ class AdminController extends Controller
         ]);
     }
 
-    // Nonaktifkan user = banned
-    public function deactivate($id)
+    public function deactivate(Request $request, $id)
     {
+        $request->validate([
+            'ban_message' => 'required|string|max:1000'
+        ]);
+
         $user = User::findOrFail($id);
 
-        $user->is_active = false;
-        $user->save();
+        $user->update([
+            'is_active' => false,
+            'ban_message' => $request->ban_message
+        ]);
 
         return response()->json([
             'message' => 'User deactivated successfully',
