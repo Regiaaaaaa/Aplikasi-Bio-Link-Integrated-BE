@@ -30,11 +30,19 @@ class GoogleAuthController extends Controller
                     'phone_number' => null,
                     'role'         => 'user',
                     'is_active'    => true,
-                    'password'     => null, 
+                    'password'     => null,
                 ]);
             }
 
-            // Generate token login
+            // Check User Banned
+            if (!$user->is_active) {
+                return redirect(
+                    "http://localhost:5173/login?error=banned&message=" .
+                    urlencode($user->ban_message ?? 'Akun anda dibanned')
+                );
+            }
+
+            // Create Token 
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return redirect("http://localhost:5173/google/callback?token={$token}");
@@ -43,4 +51,5 @@ class GoogleAuthController extends Controller
             return redirect("http://localhost:5173/login?error=google_failed");
         }
     }
+
 }
