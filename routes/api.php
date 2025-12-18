@@ -42,8 +42,15 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
         return $user;
     });
 
+    
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Banding Procces 
+    Route::post('/appeals', [UserAppealController::class, 'store']);
+    Route::get('/appeals', [UserAppealController::class, 'index']); 
+
+    Route::middleware('active_user')->group(function () {
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'getProfile']);
@@ -56,10 +63,7 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Delete user
     Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
-
-    // Banding Procces 
-    Route::post('/appeals', [UserAppealController::class, 'store']);
-    Route::get('/appeals', [UserAppealController::class, 'index']); 
+    });
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {

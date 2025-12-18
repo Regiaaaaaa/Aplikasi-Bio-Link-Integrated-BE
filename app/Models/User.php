@@ -43,6 +43,11 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token'];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
     public function bundles()
     {
         return $this->hasMany(Bundle::class);

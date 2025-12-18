@@ -27,12 +27,12 @@ class AuthController extends Controller
             'password'     => Hash::make($request->password),
             'role'         => 'user',
             'is_active'    => true,
-            'last_active'  => null, 
+            'last_active'  => null,
         ]);
 
         return response()->json([
             'message' => 'Register berhasil',
-            'user' => $user
+            'user'    => $user
         ], 201);
     }
 
@@ -45,33 +45,27 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        // Cek user tidak ditemukan / password salah
+        // Cek Credentials
         if (!$user || !$user->password || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Email atau password salah.'],
             ]);
         }
 
-        // Cek user aktif
-        if (!$user->is_active) {
-            return response()->json([
-                'message' => 'Kami mendeteksi pelanggaran pada akun Anda.',
-                'detail' => $user->ban_message
-            ], 403);
-        }
-
-        // Update last active
+        // Update Last Active
         $user->update([
             'last_active' => now(),
         ]);
 
+        // Always Token
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Front End Cek is_active
         return response()->json([
-            'message' => 'Login berhasil',
+            'message' => $user->is_active ? 'Login berhasil' : 'Akun dinonaktifkan',
             'token'   => $token,
-            'user'    => $user->fresh() 
-        ]);
+            'user'    => $user->fresh(),
+        ], 200);
     }
 
     public function logout(Request $request)
