@@ -48,7 +48,7 @@ class UserAppealController extends Controller
         ], 201);
     }
 
-    public function myAppeals()
+    public function index()
     {
         $user = Auth::user();
 
