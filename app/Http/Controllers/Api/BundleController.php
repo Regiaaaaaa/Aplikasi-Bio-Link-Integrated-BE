@@ -36,7 +36,7 @@ class BundleController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'theme_id' => 'required|exists:themes,id',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:50',
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
 
              'name' => [
@@ -105,7 +105,7 @@ class BundleController extends Controller
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'theme_id' => 'sometimes|required|exists:themes,id',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:50',
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
 
             'instagram_url' => 'nullable|url',
