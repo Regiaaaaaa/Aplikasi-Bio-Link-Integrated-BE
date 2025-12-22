@@ -13,10 +13,13 @@ class Bundle extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'user_id',
         'theme_id',
         'name',
         'slug',
+        'description',
+        'profile_image',
         'instagram_url',
         'github_url',
         'tiktok_url',

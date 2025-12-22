@@ -13,6 +13,7 @@ class Link extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'bundle_id',
         'name',
         'url',

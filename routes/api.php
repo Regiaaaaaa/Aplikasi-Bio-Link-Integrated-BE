@@ -9,6 +9,11 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\UserAppealController;
 use App\Http\Controllers\Api\AdminAppealController;
+use App\Http\Controllers\Api\ThemeController;
+use App\Http\Controllers\Api\BundleController;
+use App\Http\Controllers\Api\LinkController;   
+
+
 
 
 // Authentication Routes
@@ -23,6 +28,12 @@ Route::post('/reset-password', [OtpController::class, 'resetPassword']);
 // Google OAuth
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
+
+// Theme Routes
+Route::get('/themes', [ThemeController::class, 'index']);
+
+// Get Slug
+Route::get('/b/{slug}', [BundleController::class, 'showPublic']);
 
 
 // User Routes
@@ -63,6 +74,19 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Delete user
     Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
+
+    // Bundle Routes
+    Route::get('/bundles', [BundleController::class, 'index']);
+    Route::post('/bundles', [BundleController::class, 'store']);
+    Route::put('/bundles/{id}', [BundleController::class, 'update']);
+    Route::delete('/bundles/{id}', [BundleController::class, 'destroy']);
+
+    // Link Routes
+    Route::get('/bundles/{bundleId}/links', [LinkController::class, 'index']);
+    Route::post('/links', [LinkController::class, 'store']);
+    Route::put('/links/{id}', [LinkController::class, 'update']);
+    Route::delete('/links/{id}', [LinkController::class, 'destroy']);
+
     });
 });
 

@@ -12,8 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AdminUserSeeder::class, // Seeder admin
+            AdminUserSeeder::class, 
             UserSeeder::class,
+            ThemeSeeder::class,
         ]);
 
         // Kalau nanti mau generate dummy user:
