@@ -37,7 +37,7 @@ class BundleController extends Controller
             'name' => 'required|string|max:255',
             'theme_id' => 'required|exists:themes,id',
             'description' => 'nullable|string',
-            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
 
              'name' => [
                 'required',
@@ -106,7 +106,7 @@ class BundleController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'theme_id' => 'sometimes|required|exists:themes,id',
             'description' => 'nullable|string',
-            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
 
             'instagram_url' => 'nullable|url',
             'github_url' => 'nullable|url',
