@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AdminAppealController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\BundleController;
 use App\Http\Controllers\Api\LinkController;   
+use App\Http\Controllers\Api\AdminBundleController;
 
 
 
@@ -108,6 +109,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/appeals', [AdminAppealController::class, 'index']);
     Route::post('/appeals/{id}/approve', [AdminAppealController::class, 'approve']);
     Route::post('/appeals/{id}/reject', [AdminAppealController::class, 'reject']);
+
+    // Bundle management
+    Route::get('/bundles', [AdminBundleController::class, 'index']);
+    Route::get('/users/{userId}/bundles', [AdminBundleController::class, 'byUser']);
+    Route::get('/bundles/{id}', [AdminBundleController::class, 'show']);
+    Route::delete('/bundles/{id}', [AdminBundleController::class, 'destroy']);
 
 });
 
