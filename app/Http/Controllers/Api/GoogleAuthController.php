@@ -37,7 +37,7 @@ class GoogleAuthController extends Controller
             // Check User Banned
             if (!$user->is_active) {
                 return redirect(
-                    "https://synapze.my.id/login?error=banned&message=" .
+                    "http://localhost:8000/login?error=banned&message=" .
                     urlencode($user->ban_message ?? 'Akun anda dibanned')
                 );
             }
@@ -45,10 +45,10 @@ class GoogleAuthController extends Controller
             // Create Token
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect("https://synapze.my.id/google/callback?token={$token}");
+            return redirect("http://localhost:8000/google/callback?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect("https://synapze.my.id/login?error=google_failed");
+            return redirect("http://localhost:8000/login?error=google_failed");
         }
     }
 
