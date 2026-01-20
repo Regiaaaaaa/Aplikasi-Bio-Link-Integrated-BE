@@ -37,18 +37,18 @@ class GoogleAuthController extends Controller
             // Check User Banned
             if (!$user->is_active) {
                 return redirect(
-                    "http://localhost:8000/login?error=banned&message=" .
+                    "http://localhost:5173/login?error=banned&message=" .
                     urlencode($user->ban_message ?? 'Akun anda dibanned')
                 );
             }
 
-            // Create Token
+            // Create Token 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect("http://localhost:8000/google/callback?token={$token}");
+            return redirect("http://localhost:5173/google/callback?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect("http://localhost:8000/login?error=google_failed");
+            return redirect("http://localhost:5173/login?error=google_failed");
         }
     }
 
