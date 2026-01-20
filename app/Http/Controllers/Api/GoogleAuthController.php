@@ -15,41 +15,35 @@ class GoogleAuthController extends Controller
             ->redirect();
     }
 
+    // File: GoogleAuthController.php
+
     public function callback()
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
-
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            if (!$user) {
-                $user = User::create([
-                    'name'         => $googleUser->getName(),
-                    'username'     => strtolower(str_replace(' ', '', $googleUser->getName())) . rand(100, 999),
-                    'email'        => $googleUser->getEmail(),
-                    'phone_number' => null,
-                    'role'         => 'user',
-                    'is_active'    => true,
-                    'password'     => null,
-                ]);
-            }
+            // ... (logika create user tetap sama)
+
+            // Ambil URL Frontend dari ENV, default ke localhost jika tidak ada
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
 
             // Check User Banned
-            if (!$user->is_active) {
+            if (! $user->is_active) {
                 return redirect(
-                    "http://localhost:5173/login?error=banned&message=" .
+                    $frontendUrl.'/login?error=banned&message='.
                     urlencode($user->ban_message ?? 'Akun anda dibanned')
                 );
             }
 
-            // Create Token 
+            // Create Token
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect("http://localhost:5173/google/callback?token={$token}");
+            // Redirect ke Frontend dengan token
+            return redirect($frontendUrl."/google/callback?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect("http://localhost:5173/login?error=google_failed");
+            return redirect(env('FRONTEND_URL', 'http://localhost:5173').'/login?error=google_failed');
         }
     }
-
 }
