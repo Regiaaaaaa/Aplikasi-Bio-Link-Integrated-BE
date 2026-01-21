@@ -17,39 +17,38 @@ class GoogleAuthController extends Controller
 
     public function callback()
     {
+        $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/');
+
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            if (!$user) {
+            if (! $user) {
                 $user = User::create([
-                    'name'         => $googleUser->getName(),
-                    'username'     => strtolower(str_replace(' ', '', $googleUser->getName())) . rand(100, 999),
-                    'email'        => $googleUser->getEmail(),
+                    'name' => $googleUser->getName(),
+                    'username' => strtolower(str_replace(' ', '', $googleUser->getName())).rand(100, 999),
+                    'email' => $googleUser->getEmail(),
                     'phone_number' => null,
-                    'role'         => 'user',
-                    'is_active'    => true,
-                    'password'     => null,
+                    'role' => 'user',
+                    'is_active' => true,
+                    'password' => null,
                 ]);
             }
 
-            // Check User Banned
-            if (!$user->is_active) {
+            if (! $user->is_active) {
                 return redirect(
-                    "http://localhost:5173/login?error=banned&message=" .
+                    $frontendUrl.'/login?error=banned&message='.
                     urlencode($user->ban_message ?? 'Akun anda dibanned')
                 );
             }
 
-            // Create Token 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect("http://localhost:5173/google/callback?token={$token}");
+            return redirect($frontendUrl."/google/callback?token={$token}");
 
         } catch (\Exception $e) {
-            return redirect("http://localhost:5173/login?error=google_failed");
+            return redirect($frontendUrl.'/login?error=google_failed');
         }
     }
-
 }
