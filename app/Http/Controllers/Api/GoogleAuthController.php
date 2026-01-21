@@ -17,7 +17,7 @@ class GoogleAuthController extends Controller
 
     public function callback()
     {
-        $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/');
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
