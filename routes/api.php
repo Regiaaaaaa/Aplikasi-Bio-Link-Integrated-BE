@@ -1,21 +1,18 @@
 <?php
 
+use App\Http\Controllers\Api\AdminAppealController;
+use App\Http\Controllers\Api\AdminBundleController;
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BundleController;
 use App\Http\Controllers\Api\GoogleAuthController;
+use App\Http\Controllers\Api\LinkController;
 use App\Http\Controllers\Api\OtpController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ThemeController;
+use App\Http\Controllers\Api\UserAppealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\AdminController;
-use App\Http\Controllers\Api\UserAppealController;
-use App\Http\Controllers\Api\AdminAppealController;
-use App\Http\Controllers\Api\ThemeController;
-use App\Http\Controllers\Api\BundleController;
-use App\Http\Controllers\Api\LinkController;   
-use App\Http\Controllers\Api\AdminBundleController;
-
-
-
 
 // Authentication Routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -36,57 +33,55 @@ Route::get('/themes', [ThemeController::class, 'index']);
 // Get Slug
 Route::get('/b/{slug}', [BundleController::class, 'showPublic']);
 
-
 // User Routes
 Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Current user
     Route::get('/', function (Request $request) {
         $user = $request->user();
-        
+
         // Url Avatar
         if ($user->avatar) {
-            $user->avatar_url = asset('storage/' . $user->avatar);
+            $user->avatar_url = asset('storage/'.$user->avatar);
         } else {
             $user->avatar_url = 'https://i.pravatar.cc/150';
         }
-        
+
         return $user;
     });
 
-    
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Banding Procces 
+    // Banding Procces
     Route::post('/appeals', [UserAppealController::class, 'store']);
-    Route::get('/appeals', [UserAppealController::class, 'index']); 
+    Route::get('/appeals', [UserAppealController::class, 'index']);
 
     Route::middleware('active_user')->group(function () {
 
-    // Profile routes
-    Route::get('/profile', [ProfileController::class, 'getProfile']);
-    Route::put('/profile', [ProfileController::class, 'updateProfile']);
-    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
+        // Profile routes
+        Route::get('/profile', [ProfileController::class, 'getProfile']);
+        Route::put('/profile', [ProfileController::class, 'updateProfile']);
+        Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
 
-    // Password Settings Routes
-    Route::post('/password/set', [ProfileController::class, 'setPassword']); 
-    Route::post('/password/change', [ProfileController::class, 'changePassword']);
+        // Password Settings Routes
+        Route::post('/password/set', [ProfileController::class, 'setPassword']);
+        Route::post('/password/change', [ProfileController::class, 'changePassword']);
 
-    // Delete user
-    Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
+        // Delete user
+        Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount']);
 
-    // Bundle Routes
-    Route::get('/bundles', [BundleController::class, 'index']);
-    Route::post('/bundles', [BundleController::class, 'store']);
-    Route::put('/bundles/{id}', [BundleController::class, 'update']);
-    Route::delete('/bundles/{id}', [BundleController::class, 'destroy']);
+        // Bundle Routes
+        Route::get('/bundles', [BundleController::class, 'index']);
+        Route::post('/bundles', [BundleController::class, 'store']);
+        Route::put('/bundles/{id}', [BundleController::class, 'update']);
+        Route::delete('/bundles/{id}', [BundleController::class, 'destroy']);
 
-    // Link Routes
-    Route::get('/bundles/{bundleId}/links', [LinkController::class, 'index']);
-    Route::post('/links', [LinkController::class, 'store']);
-    Route::put('/links/{id}', [LinkController::class, 'update']);
-    Route::delete('/links/{id}', [LinkController::class, 'destroy']);
+        // Link Routes
+        Route::get('/bundles/{bundleId}/links', [LinkController::class, 'index']);
+        Route::post('/links', [LinkController::class, 'store']);
+        Route::put('/links/{id}', [LinkController::class, 'update']);
+        Route::delete('/links/{id}', [LinkController::class, 'destroy']);
 
     });
 });
@@ -117,5 +112,3 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::delete('/bundles/{id}', [AdminBundleController::class, 'destroy']);
 
 });
-
-

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Bundle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BundleController extends Controller
 {
@@ -20,8 +20,9 @@ class BundleController extends Controller
         // Add full URL for profile images
         $bundles->transform(function ($bundle) {
             $bundle->profile_image_url = $bundle->profile_image
-                ? asset('storage/' . $bundle->profile_image)
+                ? asset('storage/'.$bundle->profile_image)
                 : null;
+
             return $bundle;
         });
 
@@ -39,7 +40,7 @@ class BundleController extends Controller
             'description' => 'nullable|string|max:50',
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
 
-             'name' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
@@ -52,7 +53,7 @@ class BundleController extends Controller
                     if ($exists) {
                         $fail('Nama bundle sudah dipakai, silakan gunakan nama lain.');
                     }
-                }
+                },
             ],
 
             'instagram_url' => 'nullable|url',
@@ -87,7 +88,7 @@ class BundleController extends Controller
         ]);
 
         $bundle->profile_image_url = $imagePath
-            ? asset('storage/' . $imagePath)
+            ? asset('storage/'.$imagePath)
             : null;
 
         return response()->json([
@@ -142,7 +143,7 @@ class BundleController extends Controller
         $bundle->refresh();
 
         $bundle->profile_image_url = $bundle->profile_image
-            ? asset('storage/' . $bundle->profile_image)
+            ? asset('storage/'.$bundle->profile_image)
             : null;
 
         return response()->json([
@@ -171,17 +172,32 @@ class BundleController extends Controller
 
     public function showPublic($slug)
     {
-        $bundle = Bundle::with('theme')
-            ->where('slug', $slug)
-            ->firstOrFail();
+        try {
+            $bundle = Bundle::with('theme')
+                ->where('slug', $slug)
+                ->firstOrFail();
 
-        $bundle->profile_image_url = $bundle->profile_image
-            ? asset('storage/' . $bundle->profile_image)
-            : null;
+            // Load links (tanpa order column)
+            $bundle->links = \App\Models\Link::where('bundle_id', $bundle->id)
+                ->orderBy('created_at', 'asc')
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $bundle,
-        ]);
+            $bundle->profile_image_url = $bundle->profile_image
+                ? asset('storage/'.$bundle->profile_image)
+                : null;
+
+            return response()->json([
+                'success' => true,
+                'data' => $bundle,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in showPublic: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Bundle not found',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
     }
 }
