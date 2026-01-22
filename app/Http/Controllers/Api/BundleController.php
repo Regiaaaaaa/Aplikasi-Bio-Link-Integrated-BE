@@ -12,7 +12,7 @@ class BundleController extends Controller
 {
     public function index()
     {
-        $bundles = Bundle::with('theme')
+        $bundles = Bundle::with(['theme', 'links'])  
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
