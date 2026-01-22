@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserAppealController;
 use App\Http\Controllers\Api\PublicController;
+use App\Http\Controllers\Api\LogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +85,13 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
         Route::post('/links', [LinkController::class, 'store']);
         Route::put('/links/{id}', [LinkController::class, 'update']);
         Route::delete('/links/{id}', [LinkController::class, 'destroy']);
+
+        // Log Routes 
+        Route::get('/log-bundles', [LogController::class, 'getLogBundles']);
+        Route::get('/log-links', [LogController::class, 'getLogLinks']);
+        Route::get('/bundles/{bundleId}/log-bundles', [LogController::class, 'getLogBundlesByBundleId']);
+        Route::get('/bundles/{bundleId}/log-links', [LogController::class, 'getLogLinksByBundleId']);
+        Route::get('/stats', [LogController::class, 'getStats']);
 
     });
 });
