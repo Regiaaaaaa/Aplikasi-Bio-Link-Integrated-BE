@@ -11,8 +11,17 @@ use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserAppealController;
+use App\Http\Controllers\Api\PublicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+// Theme Routes
+Route::get('/themes', [ThemeController::class, 'index']);
+
+// Puclic Tracking
+Route::get('/b/{slug}', [PublicController::class, 'openBundle']);   
+Route::get('/r/{id}', [PublicController::class, 'redirectLink']);  
 
 // Authentication Routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -27,13 +36,6 @@ Route::post('/reset-password', [OtpController::class, 'resetPassword']);
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 
-// Theme Routes
-Route::get('/themes', [ThemeController::class, 'index']);
-
-// Get Slug
-Route::get('/b/{slug}', [BundleController::class, 'showPublic']);
-
-// User Routes
 Route::middleware('auth:sanctum')->prefix('user')->group(function () {
 
     // Current user
@@ -53,7 +55,7 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Banding Procces
+    // Banding Process
     Route::post('/appeals', [UserAppealController::class, 'store']);
     Route::get('/appeals', [UserAppealController::class, 'index']);
 
@@ -91,7 +93,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Get all users
     Route::get('/users', [AdminController::class, 'index']);
 
-    // User De/Activate
+    // User Activate / Deactivate
     Route::post('/users/{id}/activate', [AdminController::class, 'activate']);
     Route::post('/users/{id}/deactivate', [AdminController::class, 'deactivate']);
 

@@ -13,6 +13,7 @@ class LogBundle extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'bundle_id',
         'ip_address',
         'user_agent',

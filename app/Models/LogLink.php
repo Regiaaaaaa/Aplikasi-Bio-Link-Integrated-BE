@@ -13,6 +13,7 @@ class LogLink extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'link_id',
         'ip_address',
         'user_agent',
