@@ -10,13 +10,18 @@ class LogBundle extends Model
     use HasFactory;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
+
+    public $timestamps = true; // penting supaya created_at & updated_at auto
 
     protected $fillable = [
         'id',
         'bundle_id',
         'ip_address',
         'user_agent',
+        'created_at',
+        'updated_at',
     ];
 
     public function bundle()
@@ -24,4 +29,3 @@ class LogBundle extends Model
         return $this->belongsTo(Bundle::class);
     }
 }
-
