@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class LogBundle extends Model
 {
@@ -13,7 +14,7 @@ class LogBundle extends Model
 
     protected $keyType = 'string';
 
-    public $timestamps = true; // penting supaya created_at & updated_at auto
+    public $timestamps = true;
 
     protected $fillable = [
         'id',
@@ -23,6 +24,18 @@ class LogBundle extends Model
         'created_at',
         'updated_at',
     ];
+
+    // AUTO-GENERATE UUID
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
+    }
 
     public function bundle()
     {
