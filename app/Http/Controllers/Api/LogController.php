@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\DB;
 
 class LogController extends Controller
 {
-    // Get all log bundle
+    // =========================
+    // GET ALL LOG BUNDLES (USER)
+    // =========================
     public function getLogBundles(Request $request)
     {
         try {
@@ -24,24 +26,25 @@ class LogController extends Controller
                     'log_bundles.user_agent',
                     'log_bundles.created_at'
                 )
-                ->orderBy('log_bundles.created_at', 'desc')
+                ->orderByDesc('log_bundles.created_at')
                 ->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $logBundles
+                'data' => $logBundles,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch log bundles',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    
-    // Get all log links for authenticated user
+    // =========================
+    // GET ALL LOG LINKS (USER)
+    // =========================
     public function getLogLinks(Request $request)
     {
         try {
@@ -59,88 +62,82 @@ class LogController extends Controller
                     'log_links.user_agent',
                     'log_links.created_at'
                 )
-                ->orderBy('log_links.created_at', 'desc')
+                ->orderByDesc('log_links.created_at')
                 ->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $logLinks
+                'data' => $logLinks,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch log links',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    
-    // Get log bundles by bundle ID 
+    // =================================
+    // GET LOG BUNDLES BY BUNDLE ID
+    // =================================
     public function getLogBundlesByBundleId(Request $request, $bundleId)
     {
         try {
             $userId = $request->user()->id;
 
-            // Verify bundle belongs to user
             $bundle = DB::table('bundles')
                 ->where('id', $bundleId)
                 ->where('user_id', $userId)
                 ->first();
 
-            if (!$bundle) {
+            if (! $bundle) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Bundle not found'
+                    'message' => 'Bundle not found',
                 ], 404);
             }
 
-            $logBundles = DB::table('log_bundles')
+            $logs = DB::table('log_bundles')
                 ->where('bundle_id', $bundleId)
-                ->select(
-                    'id',
-                    'bundle_id',
-                    'ip_address',
-                    'user_agent',
-                    'created_at'
-                )
-                ->orderBy('created_at', 'desc')
+                ->select('id', 'bundle_id', 'ip_address', 'user_agent', 'created_at')
+                ->orderByDesc('created_at')
                 ->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $logBundles
+                'data' => $logs,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch log bundles',
-                'error' => $e->getMessage()
+                'message' => 'Failed to fetch bundle logs',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    
-    // Get log links by bundle ID 
+    // ================================
+    // GET LOG LINKS BY BUNDLE ID
+    // ================================
     public function getLogLinksByBundleId(Request $request, $bundleId)
     {
         try {
             $userId = $request->user()->id;
 
-            // Verify bundle belongs to user
             $bundle = DB::table('bundles')
                 ->where('id', $bundleId)
                 ->where('user_id', $userId)
                 ->first();
 
-            if (!$bundle) {
+            if (! $bundle) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Bundle not found'
+                    'message' => 'Bundle not found',
                 ], 404);
             }
 
-            $logLinks = DB::table('log_links')
+            $logs = DB::table('log_links')
                 ->join('links', 'log_links.link_id', '=', 'links.id')
                 ->where('links.bundle_id', $bundleId)
                 ->select(
@@ -151,66 +148,58 @@ class LogController extends Controller
                     'log_links.user_agent',
                     'log_links.created_at'
                 )
-                ->orderBy('log_links.created_at', 'desc')
+                ->orderByDesc('log_links.created_at')
                 ->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $logLinks
+                'data' => $logs,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch log links',
-                'error' => $e->getMessage()
+                'message' => 'Failed to fetch link logs',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-    
-    // Get statistics for dashboard
+    // =========================
+    // DASHBOARD STATS
+    // =========================
     public function getStats(Request $request)
     {
         try {
             $userId = $request->user()->id;
 
-            // Get bundle IDs for this user
             $bundleIds = DB::table('bundles')
                 ->where('user_id', $userId)
                 ->pluck('id');
 
-            // Count total bundle clicks
-            $totalBundleClicks = DB::table('log_bundles')
-                ->whereIn('bundle_id', $bundleIds)
-                ->count();
-
-            // Count total link clicks (join through links table)
-            $totalLinkClicks = DB::table('log_links')
-                ->join('links', 'log_links.link_id', '=', 'links.id')
-                ->whereIn('links.bundle_id', $bundleIds)
-                ->count();
-
-            // Get clicks per bundle
-            $clicksPerBundle = DB::table('log_bundles')
-                ->whereIn('bundle_id', $bundleIds)
-                ->select('bundle_id', DB::raw('COUNT(*) as clicks'))
-                ->groupBy('bundle_id')
-                ->get()
-                ->pluck('clicks', 'bundle_id');
-
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'total_bundle_clicks' => $totalBundleClicks,
-                    'total_link_clicks' => $totalLinkClicks,
-                    'clicks_per_bundle' => $clicksPerBundle
-                ]
+                    'total_bundle_clicks' => DB::table('log_bundles')
+                        ->whereIn('bundle_id', $bundleIds)
+                        ->count(),
+
+                    'total_link_clicks' => DB::table('log_links')
+                        ->join('links', 'log_links.link_id', '=', 'links.id')
+                        ->whereIn('links.bundle_id', $bundleIds)
+                        ->count(),
+
+                    'clicks_per_bundle' => DB::table('log_bundles')
+                        ->whereIn('bundle_id', $bundleIds)
+                        ->select('bundle_id', DB::raw('COUNT(*) as clicks'))
+                        ->groupBy('bundle_id')
+                        ->pluck('clicks', 'bundle_id'),
+                ],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch statistics',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
