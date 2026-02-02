@@ -27,7 +27,7 @@ class GoogleAuthController extends Controller
             if (! $user) {
                 $user = User::create([
                     'name' => $googleUser->getName(),
-                    'username' => strtolower(str_replace(' ', '', $googleUser->getName())).rand(100, 999),
+                    'username' => strtolower(str_replace(' ', '', $googleUser->getName())) . rand(100, 999),
                     'email' => $googleUser->getEmail(),
                     'phone_number' => null,
                     'role' => 'user',
@@ -35,17 +35,9 @@ class GoogleAuthController extends Controller
                     'password' => null,
                 ]);
             }
-
-            if (! $user->is_active) {
-                return redirect(
-                    $frontendUrl.'/login?error=banned&message='.
-                    urlencode($user->ban_message ?? 'Akun anda dibanned')
-                );
-            }
-
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return redirect($frontendUrl."/google/callback?token={$token}");
+            return redirect($frontendUrl . "/google/callback?token={$token}");
 
         } catch (\Exception $e) {
             return redirect($frontendUrl.'/login?error=google_failed');
