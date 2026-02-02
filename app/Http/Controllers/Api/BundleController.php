@@ -177,7 +177,7 @@ class BundleController extends Controller
                 ->where('slug', $slug)
                 ->firstOrFail();
 
-            // Load links (tanpa order column)
+            // Load links 
             $bundle->links = \App\Models\Link::where('bundle_id', $bundle->id)
                 ->orderBy('created_at', 'asc')
                 ->get();

@@ -75,7 +75,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Cek dulu, kalo udah punya password -> ga boleh set lagi
+        
         if ($user->password) {
             return response()->json([
                 'message' => 'You already have a password. Use change password instead.'
@@ -96,7 +96,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Jika user login Google & belum punya password → wajib set dulu
+        // Jika user login Google & belum punya password wajib set dulu
         if (!$user->password) {
             return response()->json([
                 'message' => 'You must set a password first before changing it.'

@@ -80,8 +80,6 @@ class OtpController extends Controller
             return response()->json(['error' => 'Email tidak ditemukan'], 404);
         }
 
-        // jika butuh: cek apakah user baru saja verifikasi OTP (kita menghapus otp_hash saat verify)
-        // tanpa token tambahan, ada resiko, tapi umumnya ok jika verify menghapus otp_hash dan Anda me-require verifikasi sebelum reset
         $user->password = bcrypt($request->password);
         $user->save();
 
