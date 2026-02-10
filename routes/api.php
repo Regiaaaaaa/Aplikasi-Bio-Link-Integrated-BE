@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ThemeController;
 use App\Http\Controllers\Api\UserAppealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LogController;
 
 // Theme Routes
 Route::get('/themes', [ThemeController::class, 'index'])
@@ -97,6 +98,13 @@ Route::middleware('auth:sanctum', 'throttle:300,1')->prefix('user')->group(funct
             ->middleware('throttle:50,1'); // Limit to 50 requests per minute
         Route::put('/links/{id}', [LinkController::class, 'update']);
         Route::delete('/links/{id}', [LinkController::class, 'destroy']);
+
+        // Analytics/Logging Routes
+        Route::get('/stats', [LogController::class, 'getStats']);
+        Route::get('/log-bundles', [LogController::class, 'getLogBundles']);
+        Route::get('/log-links', [LogController::class, 'getLogLinks']);
+        Route::get('/bundles/{bundleId}/log-bundles', [LogController::class, 'getLogBundlesByBundleId']);
+        Route::get('/bundles/{bundleId}/log-links', [LogController::class, 'getLogLinksByBundleId']);
 
     });
 });
