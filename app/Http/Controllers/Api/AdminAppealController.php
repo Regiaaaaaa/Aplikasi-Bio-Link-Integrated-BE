@@ -12,9 +12,15 @@ class AdminAppealController extends Controller
    // Get All Banding Users
     public function index()
     {
-        $appeals = UserAppeal::with('user')
+        $appeals = UserAppeal::with('user:id,name,email,avatar,role,is_active,ban_message,created_at')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function($appeal) {
+                if ($appeal->user && $appeal->user->avatar) {
+                    $appeal->user->avatar = basename($appeal->user->avatar);
+                }
+                return $appeal;
+            });
 
         return response()->json([
             'data' => $appeals
@@ -24,7 +30,7 @@ class AdminAppealController extends Controller
    // Approve Banding User
     public function approve(Request $request, $id)
     {
-        $appeal = UserAppeal::findOrFail($id);
+        $appeal = UserAppeal::with('user')->findOrFail($id);
 
         // Block Double Proccess
         if ($appeal->status !== 'pending') {
@@ -54,6 +60,10 @@ class AdminAppealController extends Controller
             'ban_message' => null
         ]);
 
+        // Reload data dengan user
+        $appeal->refresh();
+        $appeal->load('user');
+
         return response()->json([
             'message' => 'Banding disetujui & user berhasil diaktifkan',
             'appeal'  => $appeal
@@ -63,7 +73,7 @@ class AdminAppealController extends Controller
     // Reject Banding
     public function reject(Request $request, $id)
     {
-        $appeal = UserAppeal::findOrFail($id);
+        $appeal = UserAppeal::with('user')->findOrFail($id);
 
         // Block Double Proccess
         if ($appeal->status !== 'pending') {
@@ -76,6 +86,10 @@ class AdminAppealController extends Controller
             'status'       => 'rejected',
             'admin_reply'  => $request->admin_reply ?? 'Banding ditolak'
         ]);
+
+        // Reload data dengan user
+        $appeal->refresh();
+        $appeal->load('user');
 
         return response()->json([
             'message' => 'Banding ditolak',
